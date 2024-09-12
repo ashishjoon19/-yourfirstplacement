@@ -34,7 +34,6 @@ public:
                         }
                         i++;
                     }
-                    // cout<<endl<<"j-i+1 = "<<j-i+1<<s.substr(i,j-i+1)<<endl;
                     if(j-i+1 < mini){
                         mini=j-i+1;
                         res=s.substr(i,j-i+1);
