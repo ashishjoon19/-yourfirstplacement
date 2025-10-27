@@ -1,57 +1,43 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution {
 private:
-    map<int,TreeNode*>add;
-    void givepaths(TreeNode* root,vector<int>&vec,int &target,bool &flag){
-        if(!root || flag) return;
-        add[root->val]=root;
-        vec.push_back(root->val);
-        if(target==root->val){
-            flag=true;
-            return;
+    int flag;
+    vector<TreeNode*>p_path;
+    vector<TreeNode*>q_path;
+    void find(TreeNode* root,vector<TreeNode*>&path,TreeNode* &node){
+        if(!root || flag)   return;
+        path.push_back(root);
+        if(root==node){
+            flag=1;
+            return ;
         }
-        givepaths(root->left,vec,target,flag);
-        if(flag) return;
-        givepaths(root->right,vec,target,flag);
-        if(flag) return;
-        int idx=vec.size()-1;
-        vec.erase(vec.begin()+idx);
+        find(root->left,path,node);
+        find(root->right,path,node);
+        if(!flag)   path.pop_back();
     }
 public:
     TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
-        bool flag=false;
-        vector<int>path1;
-        vector<int>path2;
-        int val1=p->val;
-        int val2=q->val;
-        givepaths(root,path1,val1,flag);
-        flag=false;
-        givepaths(root,path2,val2,flag);
-        map<int,int>mapi;
-        int m=path1.size();
-        int n=path2.size();
-        cout<<"m="<<m<<",n="<<n<<endl;
-        int siz=m<n?m:n;
-        if(siz==n){
-            for(int i=0;i<n;i++){
-                mapi[path2[i]]=i;
-                cout<<path2[i]<<"  "<<i<<endl;
+        flag=0;
+        find(root,p_path,p);
+        flag=0;
+        find(root,q_path,q);
+        int i=0;
+        while(i<p_path.size() && i<q_path.size()){
+            if(p_path[i]==q_path[i]){
+                i++;
             }
-            for(int i=m-1;i>=0;i--){
-                if(mapi.find(path1[i])!=mapi.end()){
-                    return add[path1[i]];
-                }
+            else{
+                return p_path[i-1];
             }
         }
-        else{
-            for(int i=0;i<m;i++){
-                mapi[path1[i]]=i;
-            }
-            for(int i=n-1;i>=0;i--){
-                if(mapi.find(path2[i])!=mapi.end()){
-                    return add[path2[i]];
-                }
-            }
-        }
-        return root;
+        return p_path[i-1];
     }
 };
